@@ -1,0 +1,53 @@
+animations {
+  id: "idle_anim"
+  images {
+    image: "/Player/images/Ingrid the Intrepid-01.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hit_anim"
+  images {
+    image: "/Player/images/Ingrid the Intrepid-05.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "attack_anim"
+  images {
+    image: "/Player/images/Ingrid the Intrepid-04.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "sad_anim"
+  images {
+    image: "/Player/images/Ingrid the Intrepid-03.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "victory_anim"
+  images {
+    image: "/Player/images/Ingrid the Intrepid-02.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

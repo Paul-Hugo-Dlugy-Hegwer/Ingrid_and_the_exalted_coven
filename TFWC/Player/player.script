@@ -1,0 +1,148 @@
+--Intiialized with movement in mind may change for message based sys.
+math.randomseed(os.time())
+go.property("health", 4)
+go.property("current_vial", 0)
+local lose_anims = {hash("swear"), hash("ouch"), hash("yipes")}
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	msg.post("#contact_sprite", "disable")
+	--set intial character state to idle
+	self.state = "idle"
+	self.current_vial = "empty"
+	self.cllsn_URL = "empty"
+	self.not_called = true
+end
+
+--Returns the current level of HP for the player
+local function getHP()
+	return self.health
+end
+--Modifies the current HP level of player.
+local function setHP(new_HP)
+	self.health = new_HP
+end
+
+function final(self)
+end
+
+function update(self, dt)
+	if self.health <= 0 and self.not_called then
+		msg.post(self.id, "sad")
+		self.not_called = false
+	end
+	if go.get("/map_controler#map", "self_destruct") then
+		go.delete()
+	end
+end
+go.property("timer", 0.0)
+function on_message(self, message_id, message, sender)
+	if message_id == hash("m_n_bttle") then
+		self.current_vial = msg.url(message.val)
+	end
+	if message_id == hash("sad") then
+		go.set("/map_controler#map", "active_turn", false)
+		go.set("/map_controler#map", "acceptable_turn", false)
+		local pos = go.get_position()
+		self.state = "sad"
+		msg.post("#anim_sprite", "play_animation", {id = hash("sad_anim")})
+		msg.post("/villian", "victory")
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 3, 0, 
+		function ()
+			--go.set("/map_controler#map","active_turn", false)
+			msg.post("/map_controler#map", "player_has_lost")
+			msg.post("/map_controler#map", "clear_all")
+			msg.post("/background_go_lv#sprite", "play_animation", {id = hash("player_defeated")})
+			--go.set("/map_controler#map", "active_turn", true)
+		end
+		)
+	end
+	if message_id == hash("victory") then
+		local pos = go.get_position(self.id)
+		go.set("/map_controler#map", "acceptable_turn", false)
+		go.set("/map_controler#map","active_turn", false)
+		self.state = "victory"
+		msg.post("#anim_sprite", "play_animation", {id = hash("victory_anim")})
+		msg.post("main:/musicComponent#loser_sound", "play_sound")
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			if go.get("/map_controler#map", "level_1") then
+				msg.post("/background_go_lv#sprite", "play_animation", {id = hash("p_defeated")})
+			elseif go.get("/map_controler#map", "level_2") then
+				msg.post("/background_go_lv#sprite", "play_animation", {id = hash("m_defeated")})
+			elseif go.get("/map_controler#map", "level_3") then
+				msg.post("/background_go_lv#sprite", "play_animation", {id = hash("k_defeated")})
+			end
+			msg.post("/map_controler#map", "player_has_won")
+		end
+		)
+	end
+	if message_id == hash("casting") then
+		self.state = "attack"
+		msg.post("#anim_sprite", "play_animation", {id = hash("attack_anim")})
+		go.set("/map_controler#map", "acceptable_turn", false)
+	end
+	if message_id == hash("uncasting") then
+		self.state = "idle"
+		msg.post("#anim_sprite", "play_animation", {id = hash("idle_anim")})
+		--go.set("/map_controler#map", "active_turn", true)
+		--go.set("/map_controler#map", "acceptable_turn", true)
+	end
+	if message_id == hash("hit") then
+		math.random()
+		math.random()
+		self.state = "hit"
+		go.set("/map_controler#map", "acceptable_turn", false)
+		go.set("/map_controler#map","active_turn", false)
+		local pos = go.get_position()
+		msg.post("#contact_sprite", "enable")
+		msg.post("#contact_sprite", "play_animation", {id = lose_anims[math.random(#lose_anims)]})
+		msg.post("#anim_sprite", "play_animation", {id = hash("hit_anim")})
+		go.animate("/player","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post(self.id, "anim_done")
+			local dmg = go.get("/map_controler#map", "dmg_val")
+			if self.health > 0 then
+				msg.post("#contact_sprite", "disable")
+				local vial_health = go.get(self.current_vial, "health_per")
+				vial_health = vial_health - dmg
+				if vial_health > 0 then
+					go.set(self.current_vial, "health_per", vial_health)
+				else
+					go.set(self.current_vial, "health_per", 0)
+					self.health = self.health - 1
+					local new_dmg  = vial_health * (-1)
+					go.set("/map_controler#map", "dmg_val", new_dmg)
+					if new_dmg > 0 then
+						print("prev vial: ", self.current_vial)
+						go.set("/map_controler#map", "dmg_val", new_dmg)
+						go.set("/map_controler#map", "add_damage", true)
+					end
+				end
+				go.set("/map_controler#map", "p_c_t", true)
+				--go.set("/map_controler#map","active_turn", true)
+				go.set("/map_controler#map", "acceptable_turn", true)
+			end
+		end
+		)
+	end
+	if message_id == hash("anim_done") then
+		self.state = "idle"
+		msg.post("#anim_sprite", "play_animation", {id = hash("idle_anim")})
+	end
+end
+
+local function end_anim(self)
+	msg.post("#", "anim_done")
+end
+
+--Used for animation work. will change to on_message
+function on_input(self, action_id, action)
+	anim_test_bool =  false --This value determines if test animations are to be used.
+	if anim_test_bool then
+		testAnimations(self, action_id, action) -- a call to the test animation system.
+	end
+end
+
+function on_reload(self)
+end
