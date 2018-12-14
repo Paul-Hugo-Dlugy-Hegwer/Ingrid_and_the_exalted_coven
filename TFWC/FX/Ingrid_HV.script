@@ -1,0 +1,36 @@
+go.property("health_per", 6)
+
+function init(self)
+	self.url_to_send = msg.url(self.id)
+	msg.post("/map_controler#map", "trap", {val = self.url_to_send})
+	go.set("/map_controler#map", "p_c_t", true)
+end
+
+function final(self)
+end
+
+function update(self, dt)
+	if go.get("/map_controler#map", "self_destruct") then
+		go.delete()
+	end
+	if self.health_per == 6 then
+		msg.post("#sprite", "play_animation", {id = hash("full_anim")})
+	elseif self.health_per == 4 or self.health_per == 5 then
+		msg.post("#sprite", "play_animation", {id = hash("three_quarter_full_anim")})
+	elseif self.health_per == 3 then
+		msg.post("#sprite", "play_animation", {id = hash("half_anim")})
+	elseif self.health_per == 1 or self.health_per == 2 then
+		msg.post("#sprite", "play_animation", {id = hash("quarter_full_anim")})
+	elseif self.health_per <= 0 then
+		msg.post("#sprite", "play_animation", {id = hash("empty_anim")})
+	end
+end
+
+function on_message(self, message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+end
+
+function on_reload(self)
+end

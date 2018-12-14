@@ -1,0 +1,53 @@
+animations {
+  id: "empty_anim"
+  images {
+    image: "/FX/KAISER_HV/Furfur poitein bottles-03.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "quarter_full_anim"
+  images {
+    image: "/FX/KAISER_HV/Furfur poitein bottles-04.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "half_anim"
+  images {
+    image: "/FX/KAISER_HV/Furfur poitein bottles-02.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "three_quarters_full_anim"
+  images {
+    image: "/FX/KAISER_HV/Furfur poitein bottles-01.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "full_anim"
+  images {
+    image: "/FX/KAISER_HV/Furfur poitein bottles-05.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

@@ -1,0 +1,13 @@
+animations {
+  id: "hover_anim"
+  images {
+    image: "/FX/FX_images/Glow-01.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

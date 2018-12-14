@@ -1,0 +1,53 @@
+animations {
+  id: "empty_vial_anim"
+  images {
+    image: "/FX/PERGRIN VAIN VIALS/Villian 0.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "quarter_full_anim"
+  images {
+    image: "/FX/PERGRIN VAIN VIALS/Villian 25.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "three_quarters_full_anim"
+  images {
+    image: "/FX/PERGRIN VAIN VIALS/Villian Health 75.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "full_anim"
+  images {
+    image: "/FX/PERGRIN VAIN VIALS/Villian Health 100.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "half_anim"
+  images {
+    image: "/FX/PERGRIN VAIN VIALS/Villian Health 50.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0
