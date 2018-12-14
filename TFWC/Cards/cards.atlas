@@ -1,0 +1,66 @@
+images {
+  image: "/Cards/cards_images/updated_cards/card 1.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 10.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 11.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 12.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 13.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 14.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 15.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 16.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 17.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 18.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 19.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 2.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 20.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 3.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 4.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 5.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 6.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 7.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 8.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 9.png"
+}
+images {
+  image: "/Cards/cards_images/updated_cards/card 21.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

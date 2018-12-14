@@ -1,0 +1,332 @@
+--Line 2 uses os.time() to guarantee truer randomization.
+math.randomseed(os.time())
+--Lines 4-10 are card sets for certain values
+local card_1 = {[0] = hash("card 1")}
+local card_2 = {[0] = hash("card 2"), [1] = hash("card 3")}
+local card_3 = {[0] = hash("card 4"), [1] = hash("card 5"), [2] = hash("card 6")}
+local card_4 = {[0] = hash("card 7"), [1] = hash("card 8"), [2] =hash("card 9"), [3] = hash("card 10"), [4] = hash("card 11")}
+local card_5 = {[0] = hash("card 12"), [1] = hash("card 13"), [2] = hash("card 14"), [3] = hash("card 15"), [4] = hash("card 16")}
+local card_6 = {[0] = hash("card 17"), [1] = hash("card 18"), [2] = hash("card 19")}
+local card_7 = {[0] = hash("card 20"), [1] = hash("card 21")}
+--line 12-15 are a single talbe with every card for card frequency.
+local sorted_deck = {hash("card 1"), hash("card 2"), hash("card 3"), hash("card 4"), hash("card 5"),
+hash("card 6"), hash("card 7"), hash("card 8"), hash("card 9"), hash("card 10"), hash("card 11"),
+hash("card 12"), hash("card 13"), hash("card 14"), hash("card 15"), hash("card 16"), hash("card 17"), hash("card 18"),
+hash("card 19"), hash("card 20"), hash("card 21")}
+
+local lose_anims = {hash("swear"), hash("ouch"), hash("yipes")}
+local win_anims = {hash("bam"), hash("pow"), hash("yass")}
+
+--This function takes no parameters and returns a random card from the deck.
+local function rando_card()
+	--lines 20-21 shoot out random values to guarantee randomization.
+	math.random()
+	math.random()
+	return sorted_deck[math.random(#sorted_deck)]
+end
+
+--This function returns the current card_type if it is called for outside go.
+local function get_card_type()
+	return self.card_type
+end
+
+--This function is sent a card and a card set. checks if they share the card.
+local function check_the_deck(card, card_set)
+	--Takes the card_set and creates a local copy.
+	local cap = card_set
+	--i = index and it is starting at zero.
+	i = 0
+	--While the local card set at index value is not nil do lines post 39.
+	while cap[i] ~= nil do
+		-- if the passed card is equivalent to the current card in set at index
+		if card == cap[i] then
+			-- return that the card is of the right type for the called section.
+			return true
+		end
+		-- if the if statement on line 41 failed then 47 will happen.
+		--i is incremented by a value of 1
+		i = i + 1
+	end
+	--if the while loop hit nil then the card is not in card set.
+	return false
+end
+
+-- we create a property of the game object representing the card power level.
+go.property("value", 0)
+go.property("duel", false)
+go.property("moving", false)
+go.property("m_left", false)
+go.property("casting", 0)
+go.property("visibility", true)
+go.property("villian_movement", false)
+go.property("move_me", false)
+go.property("p_crash", false)
+go.property("v_crash", false)
+go.property("no_tie", true)
+--go.property("player_card", false)
+-- this function initializes the card and assigns the initial power level.
+function init(self)
+	self.mask = {
+		[hash("card_col")] = false,
+		[hash("player_col")] = false,
+		[hash("villian_col")] = false
+	}
+	-- rando_card is called and its result is stored in local var card.
+	card = rando_card()
+	self.player_card = true
+	self.speed = 2
+	self.time = 0
+	self.player_casting = false
+	self.final_strike = false
+	self.move_negative = false
+	self.move_right = false
+	self.move_sounds = true
+	-- lines 60 - 74 check the card and find out wich value set it belongs to.
+	if check_the_deck(card, card_1) then
+		self.value = 1
+	elseif check_the_deck(card, card_2) then
+		self.value = 2
+	elseif check_the_deck(card, card_3) then
+		self.value = 3
+	elseif check_the_deck(card, card_4) then
+		self.value = 4
+	elseif check_the_deck(card, card_5) then
+		self.value = 5
+	elseif check_the_deck(card, card_6) then
+		self.value = 6
+	elseif check_the_deck(card, card_7) then
+		self.value = 7
+	end
+	-- post a message to system informing it of animation to play for card.
+	msg.post("#card_sprite", "play_animation", {id = card})
+	msg.post("#contact_sprite", "disable")
+	msg.post("#hover_sprite", "disable")
+	--Takes user input to interact with card.
+	msg.post(".", "acquire_input_focus")
+end
+
+--in use
+function update(self, dt)
+	self.no_tie = go.get("/map_controler#map", "map_no_tie")
+	if go.get("/map_controler#map", "v_ready") and go.get("/map_controler#map", "p_ready") then
+		self.duel = true
+	end
+	if go.get("/map_controler#map", "self_destruct") then
+		go.delete()
+	end
+	self.time = self.time + dt
+	local time_try = 5
+	local moving_x = time_try * self.speed
+	local moving_y = time_try * self.speed
+	local position = vmath.vector3()
+	local current_pos = go.get_position()
+	if self.moving and self.player_card then
+		if current_pos.x > 338 and self.no_tie then
+			position.x = current_pos.x - moving_x
+			position.y = current_pos.y
+		end
+		if current_pos.y < 286 then
+			position.y = current_pos.y + moving_y
+			position.x = current_pos.x
+		end
+		if current_pos.x <= 338 and current_pos.y >= 276 then
+			self.moving = false
+			self.player_casting = true
+			position.x = current_pos.x
+			position.y = current_pos.y
+			msg.post("/map_controler#map", "choose_a_card")
+			msg.post("/map_controler", "p_ready", {val = msg.url(self.id), card_id = self.id})
+		end
+		position.z = current_pos.z
+
+		go.set_position(position)
+	elseif self.move_me then
+		if position.x < 899 then
+			position.x = current_pos.x + moving_x
+			position.y = current_pos.y
+			--if position.y > 400 then
+				--position.y = current_pos.y - moving_y
+			--end
+		end
+		if position.y > 400 then
+			position.y = current_pos.y - moving_y
+			position.x = current_pos.x
+		end
+		if position.x >= 899 and position.y > 329 then
+			position.y = current_pos.y - moving_y
+			position.x = current_pos.x
+		end
+		position.z = current_pos.z
+		go.set_position(position)
+		if position.x >= 899 and position.y <= 329 then
+			position.x = current_pos.x
+			position.y = current_pos.y
+			position.z = 1
+			go.set_position(position)
+			self.final_strike = true
+			self.villian_movement = false
+			msg.post("#card_sprite", "enable")
+			go.set_scale(.70)
+			go.set("/map_controler#map", "v_destroyed", true)
+			msg.post("/map_controler", "v_ready", {val = msg.url(self.id)})
+		end
+	end
+	--if self.final_strike and self.move_negative and self.duel then
+	if self.v_crash and self.no_tie then
+		msg.post("/villian", "casting")
+		position.x = current_pos.x - moving_x
+		position.y = current_pos.y
+		position.z = 1
+		--msg.post("main:/musicComponent#swoosh_sound", "play_sound")
+		go.set_position(position)
+		go.set("/map_controler#map", "v_ready", false)
+	end
+	--if self.move_right and self.player_casting and self.duel then
+	if self.p_crash and self.no_tie then
+		msg.post("/player", "casting")
+		if self.move_sounds then
+			msg.post("main:/musicComponent#swoosh_sound", "play_sound")
+			self.move_sounds = false
+		end
+		position.x = current_pos.x + moving_x
+		position.y = current_pos.y
+		position.z = 1
+		go.set_position(position)
+		go.set("/map_controler#map", "p_ready", false)
+	end	
+end
+
+function on_message(self, message_id, message, sender)
+	--activate only if the disable message has been sent.
+	if self.mask[message.group] ~= nil then
+		self.mask[message.group] = true
+	end
+	if message_id == hash("hide_animation") then
+		msg.post("#card_sprite", "disable")
+		self.visibility = false
+	elseif message_id == hash("make_visible") then
+		msg.post("#card_sprite", "enable")
+	end
+	if message_id == hash("villian_attack") then
+		self.moving = false
+		self.villian_movement = true
+	end
+	if message_id == hash("villian") then
+		self.player_card = false
+		local url_val = msg.url(self.id)
+		msg.post("#card_sprite", "disable")
+		msg.post(".", "release_input_focus")
+		msg.post("/map_controler#map", "v_back", {val = url_val})
+	end
+	if message_id == hash("collision_response") then
+		--go.set("/map_controler#map", "acceptable_turn", false)
+		if self.player_card and message.other_group == hash("villian") then 
+			self.move_sounds = true
+			if sender == msg.url("#card") and self.no_tie then
+				local pos = go.get_position()
+				msg.post("main:/musicComponent#hit_sound", "play_sound")
+				
+				math.random()
+				math.random()
+				msg.post("/player", "uncasting")
+				msg.post("/villian", "hit" )
+				print("FIRBALLS")
+				msg.post("#card", "disable")
+				msg.post(".", "release_input_focus")
+				go.set("/map_controler#map", "card_destroyed", true)
+				go.delete()
+			end	
+		elseif message.other_group == hash("hero") then
+			self.move_sounds = true
+			msg.post("/villian", "uncasting", {message = self.value})
+			msg.post("/player", "hit")
+			msg.post("main:/musicComponent#hit_sound", "play_sound")
+		
+			local health = go.get("/player#player", "health")
+			msg.post(".", "release_input_focus")
+			go.set("/map_controler#map", "card_destroyed", true)
+			go.delete()
+		elseif message.other_group == hash("card") and self.player_card then
+			local player_val = go.get("/map_controler#map", "plyr_card")
+			local villian_val = go.get("/map_controler#map", "card_val")
+			go.set("/map_controler#map", "acceptable_turn", true)
+			print("player_val", player_val)
+			print("villian_val", villian_val)
+			if player_val > villian_val then
+				go.set("/map_controler#map", "dmg_val",  player_val - villian_val)
+				print("end of set!")
+				go.delete(message.other_id)
+			elseif villian_val > player_val then
+				go.set("/map_controler#map", "dmg_val", villian_val - player_val)
+				msg.post(".", "release_input_focus")
+				print("end of set!")
+				go.delete()
+			elseif player_val == villian_val then
+				local pos = go.get_position()
+				msg.post("#contact_sprite", "enable")
+				--msg.post("#card_sprite", "disable")
+				--print(self.id)
+				self.no_tie = false
+				--go.set(message.other_id, "no_tie", false)
+				go.set("/map_controler#map", "map_no_tie", false)
+				msg.post("#contact_sprite", "play_animation", {id = hash("tie")})
+				go.delete(message.other_id)
+				msg.post("#card_sprite", "disable")
+				msg.post("main:/musicComponent#hit_sound", "play_sound")
+				
+				go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+				function ()
+					print("FUNCTIONING")
+					go.set("/map_controler#map", "card_destroyed", true)
+					msg.post("/player", "uncasting")
+					msg.post(".", "release_input_focus")
+					msg.post("/villian", "uncasting", {message = self.value})
+					print("end of set!")
+					go.set("/map_controler#map", "map_no_tie", true)
+					print("we_delete_now")
+					--go.delete(message.other_id)
+					go.delete()
+				end
+				)
+			end
+		end
+	end	
+end
+
+--This function is usable for input and interaction w/ cards.
+function on_input(self, action_id, action)
+	--checks to see if the l-mouse click has occured
+	local h_p = go.get_position()
+	local h_dis = vmath.length(vmath.vector3(action.x, action.y, h_p.z)-h_p)
+	if h_dis <= 70 and go.get("/map_controler#map", "active_turn") then
+		--delete this game object (system to change for animation :D)
+		msg.post("#hover_sprite", "enable")
+	else
+		msg.post("#hover_sprite", "disable")
+	end
+	if action_id == hash("press") and self.player_card == true and go.get("/map_controler#map", "active_turn") then
+		--gets the position of this game object instance.
+		local pos = go.get_position()
+		--determines the distance between the mouse click and the location of this object.
+		local distance = vmath.length(vmath.vector3(action.x, action.y, pos.z) - pos)
+		-- if the distance is less than equal to a given amount activate if stmnt
+		if distance <= 70 then
+			msg.post("main:/musicComponent#click_sound", "play_sound")
+			
+			--delete this game object (system to change for animation :D)
+			if self.player_casting then
+				self.move_right = true
+				go.set("/map_controler#map", "active_turn", false)
+				go.set("map_controler#map", "acceptable_turn", false)
+			else
+				go.set("/map_controler#map", "spawn_point_card", go.get_position(self.id))
+				self.moving = true
+				self.casting = true
+				print("original: ", self.value)
+				go.set("/map_controler#map", "plyr_card", self.value)
+				go.set("/map_controler#map", "active_turn", false)
+				go.set("map_controler#map", "acceptable_turn", false)
+			end
+		end
+	end
+end

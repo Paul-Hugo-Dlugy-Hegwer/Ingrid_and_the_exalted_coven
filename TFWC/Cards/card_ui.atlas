@@ -1,0 +1,73 @@
+animations {
+  id: "swear"
+  images {
+    image: "/Cards/hit animations/Villian Wins FX 1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "yipes"
+  images {
+    image: "/Cards/hit animations/Villian Win FX 2.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "ouch"
+  images {
+    image: "/Cards/hit animations/Villian Win FX 3.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tie"
+  images {
+    image: "/Cards/hit animations/Tie FX.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "bam"
+  images {
+    image: "/Cards/hit animations/Ingrid Win FX.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "pow"
+  images {
+    image: "/Cards/hit animations/Ingrid Win FX 2.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "yass"
+  images {
+    image: "/Cards/hit animations/Ingrid Win FX 3.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0
