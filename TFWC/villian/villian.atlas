@@ -1,0 +1,153 @@
+animations {
+  id: "idle_anim"
+  images {
+    image: "/villian/images/PV lower-01.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "attack_anim"
+  images {
+    image: "/villian/images/Game art-02.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hit_anim"
+  images {
+    image: "/villian/images/Game art-03.png"
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "sad_anim"
+  images {
+    image: "/villian/images/Game art-05.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "victory_anim"
+  images {
+    image: "/villian/images/Game art-04.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "idle_anim_M"
+  images {
+    image: "/villian/M-images/Mallius-01.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "attack_anim_M"
+  images {
+    image: "/villian/M-images/Mallius-02.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hit_anim_M"
+  images {
+    image: "/villian/M-images/Mallius-03.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "sad_anim_M"
+  images {
+    image: "/villian/M-images/Mallius sitting-04.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "victory_anim_M"
+  images {
+    image: "/villian/M-images/Mallius-05.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "idle_anim_K"
+  images {
+    image: "/villian/K_images/Kaiser Furfur VanderSocks-01 (1).png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "attack_anim_K"
+  images {
+    image: "/villian/K_images/Kaiser Furfur VanderSocks-02 (1).png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "hit_anim_K"
+  images {
+    image: "/villian/K_images/Kaiser Furfur VanderSocks-03 (1).png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "sad_anim_K"
+  images {
+    image: "/villian/K_images/Kaiser Furfur VanderSocks-05 (1).png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "victory_anim_K"
+  images {
+    image: "/villian/K_images/Kaiser Furfur VanderSocks-04 (1).png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0
