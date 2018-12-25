@@ -1,0 +1,76 @@
+go.property("level_1", false)
+go.property("level_2", false)
+go.property("level_3", false)
+function init(self)
+	-- Add initialization code here
+	self.space_bug_lock = true
+	-- Remove this function if not needed
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Remove this function if not needed
+	local pos = go.get_position()
+	if message_id == hash("show_creds") then
+		self.space_bug_lock = true
+		msg.post("/background_go#sprite", "play_animation", {id = hash("credit_screen")})
+		msg.post("/musicComponent#sound", "stop_sound")
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 7.5, 0, 
+		function ()
+			msg.post("/background_go#sprite", "play_animation", {id = hash("title_screen")})
+			go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 2.0, 0, 
+			function ()
+				msg.post("/background_go#sprite", "play_animation", {id = hash("intro_play_screen")})
+				msg.post("/guis#main_menu", "show_main_menu")
+				msg.post("/musicComponent#sound", "play_sound")
+			end
+			)
+		end
+		)
+	end
+	if message_id ==  hash("show_tutorial") then
+		msg.post("/background_go#sprite", "play_animation", {id = hash("tutorial_screen")})
+		msg.post("/guis#exit_tutorial", "show_e_menu")
+	end
+	if message_id == hash("show_mm") then
+		--msg.post("/guis#exit_tutorial", "show_e_menu")
+		msg.post("/background_go#sprite", "play_animation", {id = hash("intro_play_screen")})
+		--msg.post("/guis#exit_tutorial", "show_e_menu")
+		msg.post("/guis#main_menu", "show_main_menu")
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here
+	-- Remove this function if not needed
+	local pos = go.get_position()
+	if action_id == hash("start") and self.space_bug_lock then
+		msg.post("/background_go#sprite", "play_animation", {id = hash("title_screen")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 2.0, 0, 
+		function ()
+			msg.post("/background_go#sprite", "play_animation", {id = hash("intro_play_screen")})
+			msg.post("/guis#main_menu", "show_main_menu")
+			self.space_bug_lock = false
+			msg.post("/musicComponent#sound", "play_sound")
+		end
+		)
+	end
+	if action_id == hash("press") then
+		--msg.post("main:/musicComponent#click_sound", "play_sound")
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end

@@ -1,0 +1,83 @@
+images {
+  image: "/main/images/Buttons 2-01.png"
+}
+images {
+  image: "/main/images/Buttons 2-02.png"
+}
+images {
+  image: "/main/images/Buttons 2-03.png"
+}
+images {
+  image: "/main/images/Buttons 2-04.png"
+}
+images {
+  image: "/main/images/Buttons 2-05.png"
+}
+images {
+  image: "/main/images/Buttons 2-06.png"
+}
+images {
+  image: "/main/images/Buttons 2-07.png"
+}
+images {
+  image: "/main/images/Roll the Credits-06.png"
+}
+images {
+  image: "/main/images/tutorialbutton-05.png"
+}
+images {
+  image: "/main/images/tutorial Buttons-08.png"
+}
+animations {
+  id: "title_screen"
+  images {
+    image: "/main/new_backgrounds/Title Screen.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "intro_play_screen"
+  images {
+    image: "/main/new_backgrounds/Start Screen.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "the_list"
+  images {
+    image: "/main/new_backgrounds/new new new new -14.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "credit_screen"
+  images {
+    image: "/main/new_backgrounds/credits-16.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tutorial_screen"
+  images {
+    image: "/main/new_backgrounds/tutttorialll-19.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0
