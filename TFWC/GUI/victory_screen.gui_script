@@ -1,0 +1,72 @@
+-- this script contains instructions for the test menu gui.
+-- initialization function for start of gui life.
+function init(self)
+	--Aquire user input for gui interaction.
+	msg.post(".", "acquire_input_focus")
+	--This message indicates a call to show the main menu gui. (pronounced geeweee)
+	msg.post("#", "hide_v_menu")
+	--sets this object to inactive.
+	--self.active = false
+end
+
+--NOT IN USE
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+--NOT IN USE
+function update(self, dt)
+	-- Add update code here
+	-- Remove this function if not needed
+end
+
+--This function handle message calls for gui.
+function on_message(self, message_id, message, sender)
+	--if the message_id has posted to show_main_menu activate
+	if message_id == hash("show_v_menu") then
+		--enables main menu gui.
+		msg.post("#", "enable")
+		msg.post(".", "acquire_input_focus")
+		--os.exit()
+		--active gui
+		--self.active = true
+		--if message_id posted was hide_main_menu
+	elseif message_id == hash("hide_v_menu") then
+		--post a disable mesage
+		msg.post("#", "disable")
+		msg.post(".", "release_input_focus")
+		--deactivate gui
+		--self.active = false
+	end
+end
+
+--NOT IN USE
+function on_input(self, action_id, action)
+end
+
+-- this function takes input for interaction with gui.
+function on_input(self, action_id, action)
+	--if l-mouse click happened then do the following.
+	if action_id == hash("press") then
+		--os.exit()
+		msg.post("main:/musicComponent#click_sound", "play_sound")
+		local c_node = gui.get_node("credit_button")
+		--os.exit()
+		-- calls pick node to check if the action of clicking occured in location of s_node.
+		if gui.pick_node(c_node, action.x, action.y) then
+			-- calls to the level loader and loads first level.
+			--os.exit()
+			msg.post("main:/levels#loading", "credits")
+			--msg.post(receiver, message_id)
+			--sends message to hide maine menu.
+			msg.post("#", "hide_v_menu")
+		end
+	end
+end
+
+--NOT IN USE
+function on_reload(self)
+	-- Add input-handling code here
+	-- Remove this function if not needed
+end
