@@ -1,0 +1,317 @@
+--identical build to the player script no variation yet.
+--same changes incoming.
+math.randomseed(os.time())
+local win_anims = {hash("bam"), hash("pow"), hash("yass")}
+go.property("health", 4)
+go.property("card_play", false)
+go.property("current_vial", 0)
+local hand_size = 5
+local edge = 240
+local bottom_edge = 606
+local card_size = 130
+local z = 1
+local count = 0
+local card
+
+function init(self)
+	msg.post("#", "start")
+	msg.post(".", "acquire_input_focus")
+	msg.post("#contact_sprite", "disable")
+	self.current_vial = "empty"
+	self.state = "idle"
+	self.dmg_to_take = 0
+	self.speed = 2
+	self.time = 0
+	self.cllsn_URL = "empty"
+	self.not_called = true
+	if go.get("/map_controler#map", "level_1") then
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim")})
+	elseif go.get("/map_controler#map", "level_2") then
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim_M")})
+	elseif go.get("/map_controler#map", "level_3") then
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim_K")})
+	end
+end
+local function build_hand(self)
+end
+--Returns the current level of HP for the player
+local function getHP()
+	return self.health
+end
+--Modifies the current HP level of player.
+local function setHP(new_HP)
+	self.health = new_HP
+end
+
+function final(self)
+end
+
+local function playing_a_card(self)
+end
+
+function update(self, dt)
+	if self.health <= 0 and self.not_called then
+		msg.post(self.id, "sad")
+		self.not_called = false
+	end
+	if go.get("/map_controler#map", "self_destruct") then
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	local is_level_1 = go.get("/map_controler#map", "level_1")
+	local is_level_2 = go.get("/map_controler#map", "level_2")
+	local is_level_3 = go.get("/map_controler#map", "level_3")
+	if message_id == hash("m_n_bttle") then
+		self.current_vial = msg.url(message.val)
+	end
+	if message_id == hash("sad") and is_level_1 then
+		local pos = go.get_position()
+		self.state = "sad"
+		msg.post("/player", "victory")
+		msg.post("#sprite", "play_animation", {id = hash("sad_anim")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post("/background_go_lv#sprite", "play_animation", {id = hash("p_defeated")})
+			msg.post("/map_controler#map", "clear_all")
+			go.set("/map_controler#map","active_turn", false)
+		end
+		)
+	end
+	if message_id == hash("victory") and is_level_1 then
+		self.state = "victory"
+		local pos = go.get_position()
+		msg.post("main:/musicComponent#villian1_sound", "play_sound")
+		msg.post("#sprite", "play_animation", {id = hash("victory_anim")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 3, 0, 
+		function ()
+			go.set("/map_controler#map","active_turn", false)
+		end
+		)
+	end
+	if message_id == hash("casting") and is_level_1 then
+		self.state = "attack"
+		msg.post("#sprite", "play_animation", {id = hash("attack_anim")})
+	end
+	if message_id == hash("uncasting") and is_level_1 then
+		self.state = "idle"
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim")})
+	end
+	if message_id == hash("hit") and is_level_1 then
+		math.random()
+		math.random()
+		local pos = go.get_position()
+		self.state = "hit"
+		msg.post("#contact_sprite", "enable")
+		msg.post("#contact_sprite", "play_animation", {id = win_anims[math.random(#win_anims)]})
+		msg.post("#sprite", "play_animation", {id = hash("hit_anim")})
+		go.animate("/villian","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post("#contact_sprite", "disable")
+			local dmg = go.get("/map_controler#map", "dmg_val")
+			print("damage", dmg)
+			if self.health > 0 then
+				local vial_health = go.get(self.current_vial, "health_per")
+				vial_health = vial_health - dmg
+				print(vial_health)
+				if vial_health > 0 then
+					go.set(self.current_vial, "health_per", vial_health)
+				elseif self.health >= 1 then
+					go.set(self.current_vial, "health_per", 0)
+					self.health = self.health - 1
+					local new_dmg = vial_health * (-1)
+					print("NEW DAMAGE", new_dmg)
+					--go.set("/map_controler#map", "dmg_val", new_dmg)
+					if new_dmg > 0 and self.health then
+						print("prev vial: ", self.current_vial)
+						go.set("/map_controler#map", "dmg_val", new_dmg)
+						go.set("/map_controler#map", "add_damage", true)
+					end
+				else
+					go.set(self.current_vial, "health_per", 0)
+				end
+				go.set("/map_controler#map", "v_c_t", true)
+				go.set("/map_controler#map", "acceptable_turn", true)
+				--go.set("/map_controler#map","active_turn", true)
+			end
+			print(self.health)
+			msg.post(self.id, "anim_done")
+		end
+		)
+	end
+	if message_id == hash("anim_done") and is_level_1 then
+		self.state = "idle"
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim")})
+	end
+
+
+
+	
+	if message_id == hash("sad") and is_level_2 then
+		local pos = go.get_position()
+		self.state = "sad"
+		go.set("/map_controler#map","active_turn", false)
+		msg.post("/player", "victory")
+		msg.post("#sprite", "play_animation", {id = hash("sad_anim_M")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post("/background_go_lv#sprite", "play_animation", {id = hash("m_defeated")})
+			msg.post("/map_controler#map", "clear_all")
+			--go.set("/map_controler#map","active_turn", false)
+		end
+		)
+	end
+	if message_id == hash("victory") and is_level_2 then
+		self.state = "victory"
+		local pos = go.get_position()
+		msg.post("main:/musicComponent#villian2_sound", "play_sound")
+		msg.post("#sprite", "play_animation", {id = hash("victory_anim_M")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 3, 0, 
+		function ()
+			go.set("/map_controler#map","active_turn", false)
+		end
+		)
+	end
+	if message_id == hash("casting") and is_level_2 then
+		self.state = "attack"
+		msg.post("#sprite", "play_animation", {id = hash("attack_anim_M")})
+		go.set("/map_controler#map", "acceptable_turn", false)
+	end
+	if message_id == hash("uncasting") and is_level_2 then
+		self.state = "idle"
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim_M")})
+	end
+	if message_id == hash("hit") and is_level_2 then
+		math.random()
+		math.random()
+		local pos = go.get_position()
+		self.state = "hit"
+		msg.post("#contact_sprite", "enable")
+		msg.post("#contact_sprite", "play_animation", {id = win_anims[math.random(#win_anims)]})
+		msg.post("#sprite", "play_animation", {id = hash("hit_anim_M")})
+		go.animate("/villian","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post("#contact_sprite", "disable")
+			local dmg = go.get("/map_controler#map", "dmg_val")
+			print("damage", dmg)
+			if self.health > 0 then
+				local vial_health = go.get(self.current_vial, "health_per")
+				vial_health = vial_health - dmg
+				print(vial_health)
+				if vial_health > 0 then
+					go.set(self.current_vial, "health_per", vial_health)
+				elseif self.health >= 1 then
+					go.set(self.current_vial, "health_per", 0)
+					self.health = self.health - 1
+					local new_dmg = vial_health * (-1)
+					print("NEW DAMAGE", new_dmg)
+					--go.set("/map_controler#map", "dmg_val", new_dmg)
+					if new_dmg > 0 and self.health then
+						print("prev vial: ", self.current_vial)
+						go.set("/map_controler#map", "dmg_val", new_dmg)
+						go.set("/map_controler#map", "add_damage", true)
+					end
+				else
+					go.set(self.current_vial, "health_per", 0)
+				end
+				go.set("/map_controler#map", "v_c_t", true)
+				go.set("/map_controler#map", "acceptable_turn", true)
+			end
+			print(self.health)
+			msg.post(self.id, "anim_done")
+		end
+		)
+	end
+	if message_id == hash("anim_done") and is_level_2 then
+		self.state = "idle"
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim_M")})
+	end
+
+
+
+	
+	if message_id == hash("sad") and is_level_3 then
+		local pos = go.get_position()
+		self.state = "sad"
+		msg.post("/player", "victory")
+		msg.post("#sprite", "play_animation", {id = hash("sad_anim_K")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post("/background_go_lv#sprite", "play_animation", {id = hash("m_defeated")})
+			msg.post("/map_controler#map", "clear_all")
+			go.set("/map_controler#map","active_turn", false)
+		end
+		)
+	end
+	if message_id == hash("victory") and is_level_3 then
+		self.state = "victory"
+		local pos = go.get_position()
+		msg.post("main:/musicComponent#villian3_sound", "play_sound")
+		msg.post("#sprite", "play_animation", {id = hash("victory_anim_K")})
+		go.animate(".","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			go.set("/map_controler#map","active_turn", false)
+		end
+		)
+	end
+	if message_id == hash("casting") and is_level_3 then
+		self.state = "attack"
+		msg.post("#sprite", "play_animation", {id = hash("attack_anim_K")})
+	end
+	if message_id == hash("uncasting") and is_level_3 then
+		self.state = "idle"
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim_K")})
+	end
+	if message_id == hash("hit") and is_level_3 then
+		math.random()
+		math.random()
+		local pos = go.get_position()
+		self.state = "hit"
+		msg.post("#contact_sprite", "enable")
+		msg.post("#contact_sprite", "play_animation", {id = win_anims[math.random(#win_anims)]})
+		msg.post("#sprite", "play_animation", {id = hash("hit_anim_K")})
+		go.animate("/villian","position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_OUTSINE, 1.5, 0, 
+		function ()
+			msg.post("#contact_sprite", "disable")
+			local dmg = go.get("/map_controler#map", "dmg_val")
+			print("damage", dmg)
+			if self.health > 0 then
+				local vial_health = go.get(self.current_vial, "health_per")
+				vial_health = vial_health - dmg
+				print(vial_health)
+				if vial_health > 0 then
+					go.set(self.current_vial, "health_per", vial_health)
+				elseif self.health >= 1 then
+					go.set(self.current_vial, "health_per", 0)
+					self.health = self.health - 1
+					local new_dmg = vial_health * (-1)
+					print("NEW DAMAGE", new_dmg)
+					--go.set("/map_controler#map", "dmg_val", new_dmg)
+					if new_dmg > 0 and self.health then
+						print("prev vial: ", self.current_vial)
+						go.set("/map_controler#map", "dmg_val", new_dmg)
+						go.set("/map_controler#map", "add_damage", true)
+					end
+				else
+					go.set(self.current_vial, "health_per", 0)
+				end
+				go.set("/map_controler#map", "v_c_t", true)
+				go.set("/map_controler#map", "acceptable_turn", true)
+			end
+			print(self.health)
+			msg.post(self.id, "anim_done")
+		end
+		)
+	end
+	if message_id == hash("anim_done") and is_level_3 then
+		self.state = "idle"
+		msg.post("#sprite", "play_animation", {id = hash("idle_anim_K")})
+	end
+end
+
+function on_input(self, action_id, action)
+end
+
+function on_reload(self)
+end
